@@ -10,15 +10,20 @@ import org.apache.cordova.PluginResult;
 import org.apache.cordova.PluginResult.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.onfido.android.sdk.capture.DocumentType;
 import com.onfido.android.sdk.capture.ExitCode;
 import com.onfido.android.sdk.capture.Onfido;
 import com.onfido.android.sdk.capture.OnfidoConfig;
 import com.onfido.android.sdk.capture.OnfidoFactory;
 import com.onfido.android.sdk.capture.errors.OnfidoException;
+import com.onfido.android.sdk.capture.ui.options.CaptureScreenStep;
 import com.onfido.android.sdk.capture.ui.options.FlowStep;
 import com.onfido.android.sdk.capture.upload.Captures;
+import com.onfido.android.sdk.capture.upload.DocumentSide;
+import com.onfido.android.sdk.capture.utils.CountryCode;
 import com.onfido.api.client.data.Applicant;
 
 import android.content.Intent;
@@ -88,17 +93,56 @@ public class OnFidoBridge extends CordovaPlugin {
       .withApplicant(applicantId);
   }
 
+  protected JSONObject buildCaptureJsonObject(Captures captures) throws JSONException{
+    JSONObject captureJson = new JSONObject();
+    if(captures.getDocument() == null) {
+      captureJson.put("document", null);
+    }
+
+    JSONObject docJson = new JSONObject();
+
+    DocumentSide frontSide = captures.getDocument().getFront();
+    if(frontSide != null) {
+      JSONObject docSideJson = new JSONObject();
+      docSideJson.put("id", frontSide.getId());
+      docSideJson.put("side", frontSide.getSide());
+      docSideJson.put("type", frontSide.getType());
+
+      docJson.put("front", docSideJson);
+    }
+
+    DocumentSide backSide = captures.getDocument().getBack();
+    if(backSide != null) {
+      JSONObject docSideJson = new JSONObject();
+      docSideJson.put("id", backSide.getId());
+      docSideJson.put("side", backSide.getSide());
+      docSideJson.put("type", backSide.getType());
+
+      docJson.put("back", docSideJson);
+    }
+
+    captureJson.put("document", docJson);
+
+    return captureJson;
+  }
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     client.handleActivityResult(resultCode, data, new Onfido.OnfidoResultListener() {
       @Override
       public void userCompleted(Applicant applicant, Captures captures) {
-        Gson gsonObj = new Gson();
-        gsonObj.toJson(captures);
-        final PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, gsonObj.toJson(captures));
+        JSONObject captureJson;
+        try {
+          captureJson = buildCaptureJsonObject(captures);
+        } catch(JSONException e) {
+          Log.d(TAG, "userCompleted: failed to build json result");
+          return;
+        }
+
+        final PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, captureJson.toString());
         OnFidoBridge.this.currentCallbackContext.sendPluginResult(pluginResult);
-        Log.d(TAG, "userCompleted: YES");
+        Log.d(TAG, "userCompleted: successfully returned data to plugin");
       }
 
       @Override
