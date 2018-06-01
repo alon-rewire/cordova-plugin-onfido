@@ -1,6 +1,6 @@
 /**
  */
-package plugin.onfido;
+package com.plugin.onfido;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -43,7 +43,7 @@ public class OnFidoBridge extends CordovaPlugin {
 
       final FlowStep[] defaultStepsWithWelcomeScreen = new FlowStep[]{
         FlowStep.WELCOME,
-        FlowStep.CAPTURE_DOCUMENT,
+        new CaptureScreenStep(DocumentType.DRIVING_LICENCE, CountryCode.US),
         FlowStep.CAPTURE_FACE,
         FlowStep.FINAL
       };
