@@ -30,7 +30,7 @@
         </feature>
       </config-file>
 
-      <source-file src="src/android/OnFidoBridge.java" />
+      <source-file src="src/android/OnFidoBridge.java" target-dir="src/com/OnFido/" />
       <framework src="src/android/onfido.gradle" custom="true" type="gradleReference" />
     </platform>
 
