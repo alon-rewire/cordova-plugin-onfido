@@ -7,4 +7,6 @@
 - (void)echo:(CDVInvokedUrlCommand *)command;
 - (void)getDate:(CDVInvokedUrlCommand *)command;
 
+- (void)scan: (CDVInvokedUrlCommand *)command;
+
 @end

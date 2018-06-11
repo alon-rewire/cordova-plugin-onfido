@@ -44,5 +44,7 @@
 
         <header-file src="src/ios/OnFidoBridge.h" />
         <source-file src="src/ios/OnFidoBridge.m" />
+
+        <framework src="Onfido" type="podspec" spec="~> 1.2.0" />
     </platform>
 </plugin>
