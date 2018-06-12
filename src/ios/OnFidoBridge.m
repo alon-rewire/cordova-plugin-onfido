@@ -1,6 +1,8 @@
 #import "OnFidoBridge.h"
 
 #import <Cordova/CDVAvailability.h>
+#import <Onfido/Onfido-Swift.h>
+#import <AFNetworking/AFNetworking.h>
 
 @implementation OnFidoBridge
 
@@ -26,17 +28,17 @@
 }
 
 - (void)scan: (CDVInvokedUrlCommand *)command {
-  ONFlowConfigBuilder *configBuilder = [ONFlowConfig builder];
+    ONFlowConfigBuilder *configBuilder = [ONFlowConfig builder];
 
-  [configBuilder withToken:@"test_jNkxF8-E4hfeUiHgNx_OZGtdl4F2ntpS"];
-  [configBuilder withApplicantId:@"6e9b8817-42a5-4822-9693-79333169bc42"];
-  [configBuilder withDocumentStep];
-  [configBuilder withFaceStepOfVariant:ONFaceStepVariantPhoto];
+    [configBuilder withToken:@""];
+    [configBuilder withApplicantId:@"6e9b8817-42a5-4822-9693-79333169bc42"];
+    [configBuilder withDocumentStep];
+    [configBuilder withFaceStepOfVariant:ONFaceStepVariantPhoto];
 
-  NSError *configError = NULL;
-  ONFlowConfig *config = [configBuilder buildAndReturnError:&configError];
+    NSError *configError = NULL;
+    ONFlowConfig *config = [configBuilder buildAndReturnError:&configError];
 
-  if (configError == NULL) {
+    if (configError == NULL) {
       ONFlow *onFlow = [[ONFlow alloc] initWithFlowConfiguration:config];
       [onFlow withResponseHandler:^(ONFlowResponse *response) {
           CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Hello World!"];
@@ -47,9 +49,9 @@
       UIViewController *onfidoController = [onFlow runAndReturnError:&runError];
 
       if (runError == NULL) {
-        [self presentViewController:onfidoController animated:YES completion:NULL];
+        [[self viewController] presentViewController:onfidoController animated:YES completion:NULL];
       }
-  }
+    }
 }
 
 @end

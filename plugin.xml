@@ -37,14 +37,23 @@
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="OnFidoBridge">
+            <feature name="OnFido">
                 <param name="ios-package" value="OnFidoBridge" onload="true" />
             </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+          <string>Required for document and facial capture</string> 
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
+          <string>Required for video capture</string> 
         </config-file>
 
         <header-file src="src/ios/OnFidoBridge.h" />
         <source-file src="src/ios/OnFidoBridge.m" />
 
-        <framework src="Onfido" type="podspec" spec="~> 1.2.0" />
+        <pods-config ios-min-version="8.0" use-frameworks="true"/>
+        <framework src="Onfido" type="podspec" spec=""/>
     </platform>
 </plugin>
